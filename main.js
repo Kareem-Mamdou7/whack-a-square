@@ -1,4 +1,5 @@
 const scoreDisplay = document.getElementById("score");
+const timeDisplay = document.getElementById("timeLeft");
 const squares = document.querySelectorAll(".square");
 const startButton = document.getElementById("startButton");
 const resetButton = document.getElementById("resetButton");
@@ -9,6 +10,8 @@ let timeLeft = 10;
 
 startButton.addEventListener("click", () => {
 	activateSquare();
+	renderScore();
+	tick();
 });
 
 resetButton.addEventListener("click", () => {
@@ -16,6 +19,21 @@ resetButton.addEventListener("click", () => {
 	renderScore();
 	deactivateSquares();
 });
+
+function tick() {
+	if (!timeLeft) {
+		deactivateSquares();
+		scoreDisplay.innerText = `Your Score Was: ${score}!`;
+		timeDisplay.innerText = "";
+		return;
+	}
+
+	console.log(timeLeft);
+	timeDisplay.innerText = `Time Left: ${timeLeft}`;
+	timeLeft--;
+
+	setTimeout(tick, 1000);
+}
 
 function activateSquare() {
 	const randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
@@ -35,7 +53,7 @@ function selectNextSquare(event) {
 	renderScore();
 	selectedSquare.classList.remove("active");
 
-	setTimeout(activateSquare, 500);
+	setTimeout(activateSquare, 200);
 }
 
 function renderScore() {
