@@ -1,14 +1,14 @@
 const scoreDisplay = document.getElementById("score");
+const squaresArr = document.querySelectorAll(".square");
+console.log(squaresArr);
 let score = 0;
 let previousRandomNumber;
 
 function activateSquare() {
-	const randomNumber = Math.floor(Math.random() * 9) + 1; //random number from 1 to 9
+	const randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
 	previousRandomNumber = randomNumber;
 
-	console.log(randomNumber);
-
-	const selectedSquare = document.getElementById(`sq-${randomNumber}`);
+	const selectedSquare = squaresArr[randomNumber];
 
 	selectedSquare.classList.add("active");
 
