@@ -36,4 +36,5 @@ body {
 
 .active {
 	background-color: dodgerblue;
+	cursor: pointer;
 }

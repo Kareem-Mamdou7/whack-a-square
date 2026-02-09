@@ -8,7 +8,7 @@ function activateSquare() {
 
 	console.log(randomNumber);
 
-	const selectedSquare = document.getElementById(`${randomNumber}`);
+	const selectedSquare = document.getElementById(`sq-${randomNumber}`);
 
 	selectedSquare.classList.add("active");
 
@@ -17,11 +17,13 @@ function activateSquare() {
 
 // here you pass the event not the DOM object.
 function selectNextSquare(event) {
-	score++;
 	let selectedSquare = event.currentTarget;
+
+	if (!selectedSquare.classList.contains("active")) return;
+
+	score++;
 	scoreDisplay.innerText = `Score: ${score}`;
 	selectedSquare.classList.remove("active");
-	selectedSquare.removeEventListener("click", selectNextSquare);
 
 	setTimeout(activateSquare, 500);
 }
