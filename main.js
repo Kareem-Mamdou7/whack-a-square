@@ -1,17 +1,27 @@
 const scoreDisplay = document.getElementById("score");
-const squaresArr = document.querySelectorAll(".square");
-console.log(squaresArr);
+const squares = document.querySelectorAll(".square");
+const startButton = document.getElementById("startButton");
+const resetButton = document.getElementById("resetButton");
+
 let score = 0;
-let previousRandomNumber;
+let streak = 0;
+let timeLeft = 10;
+
+startButton.addEventListener("click", () => {
+	activateSquare();
+});
+
+resetButton.addEventListener("click", () => {
+	score = 0;
+	renderScore();
+	deactivateSquares();
+});
 
 function activateSquare() {
 	const randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
-	previousRandomNumber = randomNumber;
-
-	const selectedSquare = squaresArr[randomNumber];
+	const selectedSquare = squares[randomNumber];
 
 	selectedSquare.classList.add("active");
-
 	selectedSquare.addEventListener("click", selectNextSquare);
 }
 
@@ -22,10 +32,18 @@ function selectNextSquare(event) {
 	if (!selectedSquare.classList.contains("active")) return;
 
 	score++;
-	scoreDisplay.innerText = `Score: ${score}`;
+	renderScore();
 	selectedSquare.classList.remove("active");
 
 	setTimeout(activateSquare, 500);
 }
 
-activateSquare();
+function renderScore() {
+	scoreDisplay.innerText = `Score: ${score}`;
+}
+
+function deactivateSquares() {
+	squares.forEach((square) => {
+		square.classList.remove("active");
+	});
+}
