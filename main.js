@@ -1,17 +1,22 @@
 const scoreDisplay = document.getElementById("score");
 const timeDisplay = document.getElementById("timeLeft");
+const bonusDisplay = document.getElementById("bonus");
 const squares = document.querySelectorAll(".square");
 const startButton = document.getElementById("startButton");
 const resetButton = document.getElementById("resetButton");
 
 let score = 0;
-let streak = 0;
+let isRunning = false;
 let timeLeft = 10;
+let streak = 0;
 
 startButton.addEventListener("click", () => {
-	activateSquare();
-	renderScore();
-	tick();
+	if (!isRunning) {
+		isRunning = true;
+		activateSquare();
+		renderScore();
+		tick();
+	}
 });
 
 resetButton.addEventListener("click", () => {
@@ -25,6 +30,11 @@ function tick() {
 		deactivateSquares();
 		scoreDisplay.innerText = `Your Score Was: ${score}!`;
 		timeDisplay.innerText = "";
+		bonusDisplay.innerText = "";
+		isRunning = false;
+		score = 0;
+		streak = 0;
+		timeLeft = 10;
 		return;
 	}
 
@@ -49,11 +59,20 @@ function selectNextSquare(event) {
 
 	if (!selectedSquare.classList.contains("active")) return;
 
-	score++;
+	streak++;
+
+	if (streak % 5 == 0 && streak != 0) {
+		score += 3;
+		bonusDisplay.innerText = `Bonus! +3`;
+	} else {
+		score++;
+		bonusDisplay.innerText = ``;
+	}
+
 	renderScore();
 	selectedSquare.classList.remove("active");
 
-	setTimeout(activateSquare, 200);
+	if (timeLeft) setTimeout(activateSquare, 200);
 }
 
 function renderScore() {
@@ -65,3 +84,13 @@ function deactivateSquares() {
 		square.classList.remove("active");
 	});
 }
+
+squares.forEach((square) =>
+	square.addEventListener("click", () => {
+		if (!square.classList.contains("active") && score > 0) {
+			streak = 0;
+			score--;
+			renderScore();
+		}
+	}),
+);
