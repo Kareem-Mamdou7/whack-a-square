@@ -5,8 +5,14 @@ const highscoreDisplay = document.getElementById("highscore");
 const squares = document.querySelectorAll(".square");
 const startButton = document.getElementById("startButton");
 const resetButton = document.getElementById("resetButton");
+
+const gameDurationInMS = 1000;
+const streakHitpoint = 5;
+const bonus = 3;
+
 let previousActiveIndex = -1;
 let tickTimeout;
+let activeTimeout;
 let lastRoundScore;
 let highscore = 0;
 let score;
@@ -46,6 +52,7 @@ function resetStats() {
 	isRunning = false;
 	deactivateSquares();
 	clearTimeout(tickTimeout);
+	clearTimeout(activeTimeout);
 }
 
 function tick() {
@@ -71,7 +78,7 @@ function tick() {
 	timeDisplay.innerText = `Time Left: ${timeLeft}`;
 	timeLeft--;
 
-	tickTimeout = setTimeout(tick, 1000);
+	tickTimeout = setTimeout(tick, gameDurationInMS);
 }
 
 function activateSquare() {
@@ -85,7 +92,12 @@ function activateSquare() {
 
 	let selectedSquare = squares[randomNumber];
 
+	deactivateSquares();
 	selectedSquare.classList.add("active");
+	activeTimeout = setTimeout(() => {
+		deactivateSquares();
+		activateSquare();
+	}, gameDurationInMS);
 }
 
 function deactivateSquares() {
@@ -106,14 +118,15 @@ function handleClick(event) {
 
 			streak++;
 
-			if (streak % 5 == 0 && streak != 0) {
-				score += 3;
-				bonusDisplay.innerText = `Bonus! +3`;
+			if (streak % streakHitpoint == 0 && streak != 0) {
+				score += bonus;
+				bonusDisplay.innerText = `Bonus! +${bonus}`;
 			} else {
 				score++;
 				bonusDisplay.innerText = ``;
 			}
 
+			clearTimeout(activeTimeout);
 			activateSquare();
 		} else {
 			streak = 0;
