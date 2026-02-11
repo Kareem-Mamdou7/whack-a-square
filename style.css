@@ -16,6 +16,12 @@ body {
 	color: white;
 }
 
+#highscore {
+	font-size: 32px;
+	color: #555555;
+	margin-top: 40px;
+}
+
 #score {
 	font-size: 64px;
 }

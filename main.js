@@ -1,17 +1,24 @@
 const scoreDisplay = document.getElementById("score");
 const timeDisplay = document.getElementById("timeLeft");
 const bonusDisplay = document.getElementById("bonus");
+const highscoreDisplay = document.getElementById("highscore");
 const squares = document.querySelectorAll(".square");
 const startButton = document.getElementById("startButton");
 const resetButton = document.getElementById("resetButton");
 let previousActiveIndex = -1;
 let tickTimeout;
-let randomNumber;
-let savedScore;
+let lastRoundScore;
+let highscore = 0;
 let score;
 let streak;
 let timeLeft;
 let isRunning;
+
+if (localStorage.getItem("highscore") !== null) {
+	highscore = parseInt(localStorage.getItem("highscore"));
+}
+
+highscoreDisplay.innerText = `Highscore: ${highscore}`;
 
 resetStats();
 
@@ -45,10 +52,17 @@ function tick() {
 	if (!timeLeft) {
 		deactivateSquares();
 
-		savedScore = score;
+		if (score > highscore) {
+			highscore = score;
+			localStorage.setItem("highscore", highscore);
+		}
+
+		lastRoundScore = score;
+
 		resetStats();
 
-		scoreDisplay.innerText = `Your Score Was: ${savedScore}!`;
+		scoreDisplay.innerText = `Your Score Was: ${lastRoundScore}!`;
+		highscoreDisplay.innerText = `Highscore: ${highscore}`;
 		return;
 	}
 
@@ -61,7 +75,7 @@ function tick() {
 }
 
 function activateSquare() {
-	randomNumber = Math.floor(Math.random() * squares.length); //random number from 0 to 8
+	let randomNumber = Math.floor(Math.random() * squares.length); //random number from 0 to 8
 
 	while (randomNumber === previousActiveIndex) {
 		randomNumber = Math.floor(Math.random() * squares.length); //random number from 0 to 8
