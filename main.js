@@ -7,7 +7,13 @@ const resetButton = document.getElementById("resetButton");
 let previousActiveIndex = -1;
 let tickTimeout;
 let randomNumber;
-let selectedSquare;
+let savedScore;
+let score;
+let streak;
+let timeLeft;
+let isRunning;
+
+resetStats();
 
 squares.forEach((square) => {
 	square.addEventListener("click", handleClick);
@@ -39,17 +45,10 @@ function tick() {
 	if (!timeLeft) {
 		deactivateSquares();
 
-		squares.forEach((square) => {
-			square.removeEventListener("click", handleClick);
-		});
+		savedScore = score;
+		resetStats();
 
-		scoreDisplay.innerText = `Your Score Was: ${score}!`;
-		timeDisplay.innerText = "";
-		bonusDisplay.innerText = "";
-		isRunning = false;
-		score = 0;
-		streak = 0;
-		timeLeft = 10;
+		scoreDisplay.innerText = `Your Score Was: ${savedScore}!`;
 		return;
 	}
 
@@ -62,15 +61,15 @@ function tick() {
 }
 
 function activateSquare() {
-	randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
+	randomNumber = Math.floor(Math.random() * squares.length); //random number from 0 to 8
 
 	while (randomNumber === previousActiveIndex) {
-		randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
+		randomNumber = Math.floor(Math.random() * squares.length); //random number from 0 to 8
 	}
 
 	previousActiveIndex = randomNumber;
 
-	selectedSquare = squares[randomNumber];
+	let selectedSquare = squares[randomNumber];
 
 	selectedSquare.classList.add("active");
 }
