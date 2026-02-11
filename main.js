@@ -4,30 +4,45 @@ const bonusDisplay = document.getElementById("bonus");
 const squares = document.querySelectorAll(".square");
 const startButton = document.getElementById("startButton");
 const resetButton = document.getElementById("resetButton");
+let previousActiveIndex = -1;
+let tickTimeout;
+let randomNumber;
+let selectedSquare;
 
-let score = 0;
-let isRunning = false;
-let timeLeft = 10;
-let streak = 0;
+squares.forEach((square) => {
+	square.addEventListener("click", handleClick);
+});
 
 startButton.addEventListener("click", () => {
-	if (!isRunning) {
-		isRunning = true;
-		activateSquare();
-		renderScore();
-		tick();
-	}
+	resetStats();
+	renderScore();
+	isRunning = true;
+	activateSquare();
+	tick();
 });
 
-resetButton.addEventListener("click", () => {
+resetButton.addEventListener("click", resetStats);
+
+function resetStats() {
+	scoreDisplay.innerText = "";
+	timeDisplay.innerText = "";
+	bonusDisplay.innerText = "";
 	score = 0;
-	renderScore();
+	streak = 0;
+	timeLeft = 10;
+	isRunning = false;
 	deactivateSquares();
-});
+	clearTimeout(tickTimeout);
+}
 
 function tick() {
 	if (!timeLeft) {
 		deactivateSquares();
+
+		squares.forEach((square) => {
+			square.removeEventListener("click", handleClick);
+		});
+
 		scoreDisplay.innerText = `Your Score Was: ${score}!`;
 		timeDisplay.innerText = "";
 		bonusDisplay.innerText = "";
@@ -39,44 +54,25 @@ function tick() {
 	}
 
 	console.log(timeLeft);
+
 	timeDisplay.innerText = `Time Left: ${timeLeft}`;
 	timeLeft--;
 
-	setTimeout(tick, 1000);
+	tickTimeout = setTimeout(tick, 1000);
 }
 
 function activateSquare() {
-	const randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
-	const selectedSquare = squares[randomNumber];
+	randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
 
-	selectedSquare.classList.add("active");
-	selectedSquare.addEventListener("click", selectNextSquare);
-}
-
-// here you pass the event not the DOM object.
-function selectNextSquare(event) {
-	let selectedSquare = event.currentTarget;
-
-	if (!selectedSquare.classList.contains("active")) return;
-
-	streak++;
-
-	if (streak % 5 == 0 && streak != 0) {
-		score += 3;
-		bonusDisplay.innerText = `Bonus! +3`;
-	} else {
-		score++;
-		bonusDisplay.innerText = ``;
+	while (randomNumber === previousActiveIndex) {
+		randomNumber = Math.floor(Math.random() * 9); //random number from 0 to 8
 	}
 
-	renderScore();
-	selectedSquare.classList.remove("active");
+	previousActiveIndex = randomNumber;
 
-	if (timeLeft) setTimeout(activateSquare, 200);
-}
+	selectedSquare = squares[randomNumber];
 
-function renderScore() {
-	scoreDisplay.innerText = `Score: ${score}`;
+	selectedSquare.classList.add("active");
 }
 
 function deactivateSquares() {
@@ -85,12 +81,33 @@ function deactivateSquares() {
 	});
 }
 
-squares.forEach((square) =>
-	square.addEventListener("click", () => {
-		if (!square.classList.contains("active") && score > 0) {
+function renderScore() {
+	scoreDisplay.innerText = `Score: ${score}`;
+}
+
+function handleClick(event) {
+	if (isRunning) {
+		const clickedSquare = event.currentTarget;
+		if (clickedSquare.classList.contains("active")) {
+			clickedSquare.classList.remove("active");
+
+			streak++;
+
+			if (streak % 5 == 0 && streak != 0) {
+				score += 3;
+				bonusDisplay.innerText = `Bonus! +3`;
+			} else {
+				score++;
+				bonusDisplay.innerText = ``;
+			}
+
+			activateSquare();
+		} else {
 			streak = 0;
-			score--;
-			renderScore();
+
+			if (score > 0) score--;
 		}
-	}),
-);
+
+		renderScore();
+	}
+}

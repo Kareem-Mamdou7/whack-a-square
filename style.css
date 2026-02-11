@@ -59,6 +59,7 @@ body {
 	font-size: 24px;
 	background-color: dodgerblue;
 	color: white;
+	width: 100px;
 	font-weight: bold;
 	padding: 14px;
 	border: none;
@@ -66,14 +67,11 @@ body {
 	cursor: pointer;
 	transition:
 		background-color 100ms,
-		padding 100ms;
+		padding 100ms,
+		width 200ms;
 }
 
 .buttons-container button:hover {
-	background-color: #0066aa;
-	padding: 18px;
-}
-
-.pop {
-	transition: opacity 200ms;
+	background-color: #0066cc;
+	width: 120px;
 }
